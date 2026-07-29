@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>家长教育观念小调查</title>
+    <style>
+        :root {
+            --primary: #4A90D9;
+            --primary-light: #E8F0FE;
+            --primary-dark: #3A7BC8;
+            --accent: #FF8C42;
+            --bg: #F5F5F5;
+            --card: #FFFFFF;
+            --text: #333333;
+            --text-light: #888888;
+            --border: #E0E0E0;
+            --success: #4CAF50;
+            --error: #F44336;
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--border);
+            z-index: 100;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.4s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 32px 0 24px;
+        }
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+        .header p {
+            font-size: 14px;
+            color: var(--text-light);
+            max-width: 320px;
+            margin: 0 auto;
+        }
+        .header .meta {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--primary);
+        }
+        .header .meta span {
+            background: var(--primary-light);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* Section */
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .section-subtitle {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .question-card .q-label {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .question-card .q-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .question-card .q-hint {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 14px;
+        }
+
+        /* Radio & Checkbox Options */
+        .option-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .option-item:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .option-item.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .option-item input {
+            display: none;
+        }
+        .option-item .indicator {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .option-item.checkbox .indicator {
+            border-radius: 5px;
+        }
+        .option-item.selected .indicator {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+        .option-item.selected .indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+        .option-item.checkbox.selected .indicator::after {
+            width: 10px;
+            height: 8px;
+            background: transparent;
+            border-left: 2px solid white;
+            border-bottom: 2px solid white;
+            border-radius: 0;
+            transform: translate(-50%, -60%) rotate(-45deg);
+        }
+        .option-item .option-text {
+            font-size: 15px;
+            flex: 1;
+        }
+
+        /* Other Input */
+        .other-input {
+            margin-top: 8px;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        .other-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Text Input */
+        .text-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+        }
+        .text-input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-primary:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-light);
+            border: 1.5px solid var(--border);
+        }
+        .btn-secondary:hover {
+            border-color: var(--text-light);
+        }
+
+        /* Thank You Page */
+        .thank-you {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .thank-you .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .thank-you h2 {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        .thank-you p {
+            font-size: 15px;
+            color: var(--text-light);
+            margin-bottom: 8px;
+        }
+        .thank-you .summary-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 24px;
+            text-align: left;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .thank-you .summary-card h3 {
+            font-size: 14px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        .summary-item .label {
+            color: var(--text-light);
+        }
+
+        /* Error State */
+        .error-msg {
+            color: var(--error);
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+        }
+        .question-card.error .error-msg {
+            display: block;
+        }
+        .question-card.error .option-group {
+            border: 1px solid var(--error);
+            border-radius: 10px;
+            padding: 4px;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .loading-overlay.active {
+            display: flex;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Skip notice */
+        .skip-notice {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        /* Privacy note */
+        .privacy-note {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-light);
+            padding: 20px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+        <span>正在提交...</span>
+    </div>
+
+    <div class="container" id="app">
+        <!-- Header -->
+        <div class="header" id="headerSection">
+            <h1>📋 家长教育观念小调查</h1>
+            <p>关于孩子零花钱管理和 AI 教育的看法，您的真实想法对我们非常重要</p>
+            <div class="meta">
+                <span>⏱ 约 3 分钟</span>
+                <span>📝 18 道题</span>
+            </div>
+        </div>
+
+        <!-- Section 1: 基本信息 -->
+        <div class="section" id="section1" data-section="1">
+            <div class="section-title">第一部分</div>
+            <div class="section-subtitle">基本信息（2 题）</div>
+
+            <div class="question-card" data-question="q1" data-type="radio" data-required="true">
+                <div class="q-label">Q1</div>
+                <div class="q-text">您是孩子的？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="父亲">
+                        <input type="radio" name="q1" value="父亲">
+                        <span class="indicator"></span>
+                        <span class="option-text">爸爸</span>
+                    </label>
+                    <label class="option-item" data-value="母亲">
+                        <input type="radio" name="q1" value="母亲">
+                        <span class="indicator"></span>
+                        <span class="option-text">妈妈</span>
+                    </label>
+                    <label class="option-item" data-value="其他">
+                        <input type="radio" name="q1" value="其他">
+                        <span class="indicator"></span>
+                        <span class="option-text">其他（爷爷奶奶等）</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q2" data-type="radio" data-required="true">
+                <div class="q-label">Q2</div>
+                <div class="q-text">孩子目前几岁？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="6-7岁">
+                        <input type="radio" name="q2" value="6-7岁">
+                        <span class="indicator"></span>
+                        <span class="option-text">6-7 岁</span>
+                    </label>
+                    <label class="option-item" data-value="8-9岁">
+                        <input type="radio" name="q2" value="8-9岁">
+                        <span class="indicator"></span>
+                        <span class="option-text">8-9 岁</span>
+                    </label>
+                    <label class="option-item" data-value="10-11岁">
+                        <input type="radio" name="q2" value="10-11岁">
+                        <span class="indicator"></span>
+                        <span class="option-text">10-11 岁</span>
+                    </label>
+                    <label class="option-item" data-value="12-13岁">
+                        <input type="radio" name="q2" value="12-13岁">
+                        <span class="indicator"></span>
+                        <span class="option-text">12-13 岁</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+        </div>
+
+        <!-- Section 2: 零花钱行为 -->
+        <div class="section" id="section2" data-section="2">
+            <div class="section-title">第二部分</div>
+            <div class="section-subtitle">关于孩子的零花钱（3 题）</div>
+
+            <div class="question-card" data-question="q3" data-type="radio" data-required="true">
+                <div class="q-label">Q3</div>
+                <div class="q-text">孩子目前有零花钱吗？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="定期给">
+                        <input type="radio" name="q3" value="定期给">
+                        <span class="indicator"></span>
+                        <span class="option-text">有，定期给（每周/每月）</span>
+                    </label>
+                    <label class="option-item" data-value="偶尔给">
+                        <input type="radio" name="q3" value="偶尔给">
+                        <span class="indicator"></span>
+                        <span class="option-text">有，偶尔给</span>
+                    </label>
+                    <label class="option-item" data-value="没有">
+                        <input type="radio" name="q3" value="没有">
+                        <span class="indicator"></span>
+                        <span class="option-text">没有固定零花钱</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q4" data-type="radio" data-required="true" id="q4Card">
+                <div class="q-label">Q4</div>
+                <div class="q-text">孩子拿到零花钱后，通常怎么处理？</div>
+                <div class="q-hint">如果没有零花钱，请选最后一项</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="很快花完">
+                        <input type="radio" name="q4" value="很快花完">
+                        <span class="indicator"></span>
+                        <span class="option-text">很快就花完了，买零食或小玩具</span>
+                    </label>
+                    <label class="option-item" data-value="花一部分存一部分">
+                        <input type="radio" name="q4" value="花一部分存一部分">
+                        <span class="indicator"></span>
+                        <span class="option-text">花一部分，剩下的会攒着</span>
+                    </label>
+                    <label class="option-item" data-value="基本攒着">
+                        <input type="radio" name="q4" value="基本攒着">
+                        <span class="indicator"></span>
+                        <span class="option-text">基本都存着，很少花</span>
+                    </label>
+                    <label class="option-item" data-value="没有零花钱">
+                        <input type="radio" name="q4" value="没有零花钱">
+                        <span class="indicator"></span>
+                        <span class="option-text">孩子没有零花钱，跳过此题</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q5" data-type="radio" data-required="true">
+                <div class="q-label">Q5</div>
+                <div class="q-text">您有尝试过教孩子管理金钱吗？效果如何？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="教过效果好">
+                        <input type="radio" name="q5" value="教过效果好">
+                        <span class="indicator"></span>
+                        <span class="option-text">教过，效果还不错</span>
+                    </label>
+                    <label class="option-item" data-value="教过效果不好">
+                        <input type="radio" name="q5" value="教过效果不好">
+                        <span class="indicator"></span>
+                        <span class="option-text">教过，但孩子不太听/坚持不下来</span>
+                    </label>
+                    <label class="option-item" data-value="想教但不知道怎么教">
+                        <input type="radio" name="q5" value="想教但不知道怎么教">
+                        <span class="indicator"></span>
+                        <span class="option-text">想教，但不知道用什么方法</span>
+                    </label>
+                    <label class="option-item" data-value="觉得还早">
+                        <input type="radio" name="q5" value="觉得还早">
+                        <span class="indicator"></span>
+                        <span class="option-text">觉得孩子还小，长大了自然会</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+        </div>
+
+        <!-- Section 3: AI 接受度 -->
+        <div class="section" id="section3" data-section="3">
+            <div class="section-title">第三部分</div>
+            <div class="section-subtitle">关于 AI 与教育（3 题）</div>
+
+            <div class="question-card" data-question="q6" data-type="radio" data-required="true">
+                <div class="q-label">Q6</div>
+                <div class="q-text">您的孩子用过 AI 工具吗？</div>
+                <div class="q-hint">如 AI 聊天、AI 画画、AI 翻译等</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="经常用">
+                        <input type="radio" name="q6" value="经常用">
+                        <span class="indicator"></span>
+                        <span class="option-text">用过，而且经常用</span>
+                    </label>
+                    <label class="option-item" data-value="用过几次">
+                        <input type="radio" name="q6" value="用过几次">
+                        <span class="indicator"></span>
+                        <span class="option-text">用过几次，但不算常用</span>
+                    </label>
+                    <label class="option-item" data-value="没用过但不排斥">
+                        <input type="radio" name="q6" value="没用过但不排斥">
+                        <span class="indicator"></span>
+                        <span class="option-text">没用过，但不排斥尝试</span>
+                    </label>
+                    <label class="option-item" data-value="没用过且不太想">
+                        <input type="radio" name="q6" value="没用过且不太想">
+                        <span class="indicator"></span>
+                        <span class="option-text">没用过，也不太想让孩子用</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q7" data-type="radio" data-required="true">
+                <div class="q-label">Q7</div>
+                <div class="q-text">如果有一个"聪明的 AI 助手"，能用讲故事、互动问答的方式教孩子学习生活常识（比如如何管理零花钱），您的态度是？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="很支持">
+                        <input type="radio" name="q7" value="很支持">
+                        <span class="indicator"></span>
+                        <span class="option-text">很感兴趣，愿意让孩子试试</span>
+                    </label>
+                    <label class="option-item" data-value="可以先试试">
+                        <input type="radio" name="q7" value="可以先试试">
+                        <span class="indicator"></span>
+                        <span class="option-text">可以先试试看，看效果再说</span>
+                    </label>
+                    <label class="option-item" data-value="有顾虑">
+                        <input type="radio" name="q7" value="有顾虑">
+                        <span class="indicator"></span>
+                        <span class="option-text">有些顾虑，需要先了解更多</span>
+                    </label>
+                    <label class="option-item" data-value="不太支持">
+                        <input type="radio" name="q7" value="不太支持">
+                        <span class="indicator"></span>
+                        <span class="option-text">不太想让机器来教孩子</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q8" data-type="checkbox" data-required="true">
+                <div class="q-label">Q8</div>
+                <div class="q-text">您最关心 AI 与孩子互动的哪些方面？</div>
+                <div class="q-hint">可多选，选择您最在意的</div>
+                <div class="option-group">
+                    <label class="option-item checkbox" data-value="内容安全">
+                        <input type="checkbox" name="q8" value="内容安全">
+                        <span class="indicator"></span>
+                        <span class="option-text">内容安全（会不会说不该说的话）</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="隐私保护">
+                        <input type="checkbox" name="q8" value="隐私保护">
+                        <span class="indicator"></span>
+                        <span class="option-text">隐私保护（会不会收集孩子信息）</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="依赖性">
+                        <input type="checkbox" name="q8" value="依赖性">
+                        <span class="indicator"></span>
+                        <span class="option-text">依赖性（孩子会不会太依赖 AI）</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="准确性">
+                        <input type="checkbox" name="q8" value="准确性">
+                        <span class="indicator"></span>
+                        <span class="option-text">准确性（AI 说错了怎么办）</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="屏幕时间">
+                        <input type="checkbox" name="q8" value="屏幕时间">
+                        <span class="indicator"></span>
+                        <span class="option-text">屏幕时间（又多了一个看屏幕的理由）</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="都不担心">
+                        <input type="checkbox" name="q8" value="都不担心">
+                        <span class="indicator"></span>
+                        <span class="option-text">这些我都不太担心</span>
+                    </label>
+                </div>
+                <div class="error-msg">请至少选择一个选项</div>
+            </div>
+        </div>
+
+        <!-- Section 4: 教育消费 -->
+        <div class="section" id="section4" data-section="4">
+            <div class="section-title">第四部分</div>
+            <div class="section-subtitle">关于教育产品消费（3 题）</div>
+
+            <div class="question-card" data-question="q9" data-type="radio" data-required="true">
+                <div class="q-label">Q9</div>
+                <div class="q-text">过去一年，您为孩子报过哪些课外学习？</div>
+                <div class="q-hint">选择最主要的 1-2 项</div>
+                <div class="option-group">
+                    <label class="option-item checkbox" data-value="学科辅导">
+                        <input type="checkbox" name="q9" value="学科辅导">
+                        <span class="indicator"></span>
+                        <span class="option-text">学科辅导（数学、英语等）</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="编程/科技">
+                        <input type="checkbox" name="q9" value="编程/科技">
+                        <span class="indicator"></span>
+                        <span class="option-text">编程 / 科技类</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="艺术/音乐">
+                        <input type="checkbox" name="q9" value="艺术/音乐">
+                        <span class="indicator"></span>
+                        <span class="option-text">艺术 / 音乐类</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="体育/运动">
+                        <input type="checkbox" name="q9" value="体育/运动">
+                        <span class="indicator"></span>
+                        <span class="option-text">体育 / 运动类</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="没有报过">
+                        <input type="checkbox" name="q9" value="没有报过">
+                        <span class="indicator"></span>
+                        <span class="option-text">没有报过课外班</span>
+                    </label>
+                </div>
+                <div class="error-msg">请至少选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q10" data-type="radio" data-required="true">
+                <div class="q-label">Q10</div>
+                <div class="q-text">您每年在孩子课外教育上大概花多少钱？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="0元">
+                        <input type="radio" name="q10" value="0元">
+                        <span class="indicator"></span>
+                        <span class="option-text">基本没花</span>
+                    </label>
+                    <label class="option-item" data-value="1000-5000元">
+                        <input type="radio" name="q10" value="1000-5000元">
+                        <span class="indicator"></span>
+                        <span class="option-text">1,000 - 5,000 元</span>
+                    </label>
+                    <label class="option-item" data-value="5000-10000元">
+                        <input type="radio" name="q10" value="5000-10000元">
+                        <span class="indicator"></span>
+                        <span class="option-text">5,000 - 10,000 元</span>
+                    </label>
+                    <label class="option-item" data-value="10000元以上">
+                        <input type="radio" name="q10" value="10000元以上">
+                        <span class="indicator"></span>
+                        <span class="option-text">10,000 元以上</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q11" data-type="radio" data-required="true">
+                <div class="q-label">Q11</div>
+                <div class="q-text">选择教育产品时，您最看重什么？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="孩子喜欢">
+                        <input type="radio" name="q11" value="孩子喜欢">
+                        <span class="indicator"></span>
+                        <span class="option-text">孩子喜欢、愿意主动学</span>
+                    </label>
+                    <label class="option-item" data-value="学习效果">
+                        <input type="radio" name="q11" value="学习效果">
+                        <span class="indicator"></span>
+                        <span class="option-text">能看到明显的学习效果</span>
+                    </label>
+                    <label class="option-item" data-value="品牌口碑">
+                        <input type="radio" name="q11" value="品牌口碑">
+                        <span class="indicator"></span>
+                        <span class="option-text">品牌靠谱、其他家长推荐</span>
+                    </label>
+                    <label class="option-item" data-value="价格合理">
+                        <input type="radio" name="q11" value="价格合理">
+                        <span class="indicator"></span>
+                        <span class="option-text">价格合理、性价比高</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+        </div>
+
+        <!-- Section 5: 产品验证 -->
+        <div class="section" id="section5" data-section="5">
+            <div class="section-title">第五部分</div>
+            <div class="section-subtitle">关于一个具体的产品想法（4 题）</div>
+
+            <div class="question-card" data-question="q12" data-type="radio" data-required="true">
+                <div class="q-label">Q12</div>
+                <div class="q-text">假设有一个微信小程序产品：<br>用 AI 讲故事的方式，教 8-12 岁孩子学会管理零花钱。5 个单元的课程，大约 2-3 周学完。<br><br>您觉得这样的产品，一年值多少钱？</div>
+                <div class="q-hint">请选择您认为合理的价格</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="免费">
+                        <input type="radio" name="q12" value="免费">
+                        <span class="indicator"></span>
+                        <span class="option-text">应该是免费的</span>
+                    </label>
+                    <label class="option-item" data-value="49元以下">
+                        <input type="radio" name="q12" value="49元以下">
+                        <span class="indicator"></span>
+                        <span class="option-text">49 元以内 / 年</span>
+                    </label>
+                    <label class="option-item" data-value="49-99元">
+                        <input type="radio" name="q12" value="49-99元">
+                        <span class="indicator"></span>
+                        <span class="option-text">49 - 99 元 / 年</span>
+                    </label>
+                    <label class="option-item" data-value="99-199元">
+                        <input type="radio" name="q12" value="99-199元">
+                        <span class="indicator"></span>
+                        <span class="option-text">99 - 199 元 / 年</span>
+                    </label>
+                    <label class="option-item" data-value="199-299元">
+                        <input type="radio" name="q12" value="199-299元">
+                        <span class="indicator"></span>
+                        <span class="option-text">199 - 299 元 / 年</span>
+                    </label>
+                    <label class="option-item" data-value="299元以上">
+                        <input type="radio" name="q12" value="299元以上">
+                        <span class="indicator"></span>
+                        <span class="option-text">299 元以上 / 年也愿意</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q13" data-type="radio" data-required="true">
+                <div class="q-label">Q13</div>
+                <div class="q-text">如果这个产品定价 199 元/年，提供 7 天免费试用（可以先体验 2 个单元再决定是否购买），您会？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="会试用也很可能买">
+                        <input type="radio" name="q13" value="会试用也很可能买">
+                        <span class="indicator"></span>
+                        <span class="option-text">会试用，觉得好很可能付费</span>
+                    </label>
+                    <label class="option-item" data-value="会试用但不一定买">
+                        <input type="radio" name="q13" value="会试用但不一定买">
+                        <span class="indicator"></span>
+                        <span class="option-text">会试用，但不确定会不会付费</span>
+                    </label>
+                    <label class="option-item" data-value="可以试试">
+                        <input type="radio" name="q13" value="可以试试">
+                        <span class="indicator"></span>
+                        <span class="option-text">可以试试，但 199 有点贵</span>
+                    </label>
+                    <label class="option-item" data-value="不会试用">
+                        <input type="radio" name="q13" value="不会试用">
+                        <span class="indicator"></span>
+                        <span class="option-text">不会试用，不太感兴趣</span>
+                    </label>
+                </div>
+                <div class="error-msg">请选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q14" data-type="checkbox" data-required="true">
+                <div class="q-label">Q14</div>
+                <div class="q-text">您觉得这个产品最吸引您的卖点是什么？</div>
+                <div class="q-hint">可多选</div>
+                <div class="option-group">
+                    <label class="option-item checkbox" data-value="AI互动教学">
+                        <input type="checkbox" name="q14" value="AI互动教学">
+                        <span class="indicator"></span>
+                        <span class="option-text">AI 互动教学，不是枯燥的课本</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="实用财商">
+                        <input type="checkbox" name="q14" value="实用财商">
+                        <span class="indicator"></span>
+                        <span class="option-text">学的是实用的零花钱管理</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="微信小程序方便">
+                        <input type="checkbox" name="q14" value="微信小程序方便">
+                        <span class="indicator"></span>
+                        <span class="option-text">微信小程序，不用下载 APP</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="价格实惠">
+                        <input type="checkbox" name="q14" value="价格实惠">
+                        <span class="indicator"></span>
+                        <span class="option-text">价格实惠，比课外班便宜很多</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="有免费试用">
+                        <input type="checkbox" name="q14" value="有免费试用">
+                        <span class="indicator"></span>
+                        <span class="option-text">有免费试用，不满意不花钱</span>
+                    </label>
+                    <label class="option-item checkbox" data-value="都不吸引">
+                        <input type="checkbox" name="q14" value="都不吸引">
+                        <span class="indicator"></span>
+                        <span class="option-text">这些都不太吸引我</span>
+                    </label>
+                </div>
+                <div class="error-msg">请至少选择一个选项</div>
+            </div>
+
+            <div class="question-card" data-question="q15" data-type="text" data-required="false">
+                <div class="q-label">Q15</div>
+                <div class="q-text">如果我要做这个产品，您最想跟我说一句话是什么？</div>
+                <div class="q-hint">任何建议、担忧或期望都可以，选填</div>
+                <textarea class="text-input" name="q15" placeholder="比如：一定要注意内容安全 / 希望孩子真的能学到东西 / 价格再便宜点就好了..."></textarea>
+            </div>
+        </div>
+
+        <!-- Section 6: 后续联系 -->
+        <div class="section" id="section6" data-section="6">
+            <div class="section-title">最后一步</div>
+            <div class="section-subtitle">方便后续联系（2 题）</div>
+
+            <div class="question-card" data-question="q16" data-type="radio" data-required="false">
+                <div class="q-label">Q16</div>
+                <div class="q-text">如果产品做好了，您愿意第一时间试用吗？</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="愿意">
+                        <input type="radio" name="q16" value="愿意">
+                        <span class="indicator"></span>
+                        <span class="option-text">愿意，做好了告诉我</span>
+                    </label>
+                    <label class="option-item" data-value="看情况">
+                        <input type="radio" name="q16" value="看情况">
+                        <span class="indicator"></span>
+                        <span class="option-text">看情况吧</span>
+                    </label>
+                    <label class="option-item" data-value="不太想">
+                        <input type="radio" name="q16" value="不太想">
+                        <span class="indicator"></span>
+                        <span class="option-text">不太想</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-card" data-question="q17" data-type="text" data-required="false">
+                <div class="q-label">Q17</div>
+                <div class="q-text">您的微信号或手机号</div>
+                <div class="q-hint">仅用于产品上线后第一时间通知您试用，不会用于其他用途</div>
+                <input type="text" class="other-input" name="q17" placeholder="选填，留空也可以">
+            </div>
+
+            <div class="question-card" data-question="q18" data-type="radio" data-required="false">
+                <div class="q-label">Q18</div>
+                <div class="q-text">您愿意参加一个 10 分钟的简短电话访谈吗？</div>
+                <div class="q-hint">可以更深入地聊聊您的想法</div>
+                <div class="option-group">
+                    <label class="option-item" data-value="愿意访谈">
+                        <input type="radio" name="q18" value="愿意访谈">
+                        <span class="indicator"></span>
+                        <span class="option-text">愿意，可以联系我</span>
+                    </label>
+                    <label class="option-item" data-value="不愿意访谈">
+                        <input type="radio" name="q18" value="不愿意访谈">
+                        <span class="indicator"></span>
+                        <span class="option-text">不太方便</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="btn-group" id="btnGroup">
+            <button class="btn btn-secondary" id="btnPrev" style="display:none" onclick="prevSection()">上一步</button>
+            <button class="btn btn-primary" id="btnNext" onclick="nextSection()">开始填写</button>
+        </div>
+
+        <!-- Thank You Page -->
+        <div class="section" id="thankYou">
+            <div class="thank-you">
+                <div class="icon">🎉</div>
+                <h2>感谢您的参与！</h2>
+                <p>您的每一份反馈都非常宝贵</p>
+                <p>我们会认真对待每一个回答</p>
+                <div class="summary-card">
+                    <h3>📊 您的回答概览</h3>
+                    <div id="summaryContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="privacy-note">
+            🔒 您的回答仅用于产品调研，绝不泄露个人信息
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1" integrity="sha384-kF0a8hZBxN0OJyMz3QXPGJvfeKJjKrfMOf0+4bBfFVr0R35EU124R7V0Kx9OY7Kq" crossorigin="anonymous"></script>
+    <script>
+    // ============================================================
+    // 📌 配置区域 - 请替换为你的 Supabase 信息
+    // ============================================================
+    const SUPABASE_URL = 'https://iheudgnvoydjsrwuzcpv.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_xGQP9VdJ9YVt8N-xrVXKHw_yMBCcYvI';
+    // ============================================================
+
+    // 初始化 Supabase（如果配置了的话）
+    let supabase = null;
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    // 问卷状态
+    const TOTAL_SECTIONS = 6;
+    let currentSection = 0; // 0 = header (start page)
+    const startTime = Date.now();
+
+    // DOM
+    const progressFill = document.getElementById('progressFill');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const headerSection = document.getElementById('headerSection');
+    const btnGroup = document.getElementById('btnGroup');
+    const loading = document.getElementById('loading');
+
+    // 初始化：显示开始页
+    function init() {
+        headerSection.style.display = 'block';
+        updateButtons();
+        bindOptionClicks();
+    }
+
+    // 绑定选项点击事件
+    function bindOptionClicks() {
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const card = this.closest('.question-card');
+                const isCheckbox = this.classList.contains('checkbox');
+                const input = this.querySelector('input');
+
+                if (isCheckbox) {
+                    // 多选：切换选中状态
+                    this.classList.toggle('selected');
+                    input.checked = this.classList.contains('selected');
+                } else {
+                    // 单选：清除同组其他选项
+                    card.querySelectorAll('.option-item').forEach(opt => {
+                        opt.classList.remove('selected');
+                        opt.querySelector('input').checked = false;
+                    });
+                    this.classList.add('selected');
+                    input.checked = true;
+                }
+
+                // 清除错误状态
+                card.classList.remove('error');
+            });
+        });
+    }
+
+    // 验证当前 section
+    function validateSection(sectionNum) {
+        const section = document.getElementById('section' + sectionNum);
+        if (!section) return true;
+
+        let valid = true;
+        section.querySelectorAll('.question-card[data-required="true"]').forEach(card => {
+            const type = card.dataset.type;
+            let hasAnswer = false;
+
+            if (type === 'radio') {
+                hasAnswer = card.querySelector('input[type="radio"]:checked') !== null;
+            } else if (type === 'checkbox') {
+                hasAnswer = card.querySelector('input[type="checkbox"]:checked') !== null;
+            } else if (type === 'text') {
+                hasAnswer = card.querySelector('.text-input').value.trim() !== '';
+            }
+
+            if (!hasAnswer) {
+                card.classList.add('error');
+                valid = false;
+            } else {
+                card.classList.remove('error');
+            }
+        });
+
+        return valid;
+    }
+
+    // 收集所有答案
+    function collectAnswers() {
+        const answers = {};
+        document.querySelectorAll('.question-card[data-question]').forEach(card => {
+            const qName = card.dataset.question;
+            const type = card.dataset.type;
+
+            if (type === 'radio') {
+                const checked = card.querySelector('input[type="radio"]:checked');
+                answers[qName] = checked ? checked.value : '';
+            } else if (type === 'checkbox') {
+                const checked = card.querySelectorAll('input[type="checkbox"]:checked');
+                answers[qName] = Array.from(checked).map(c => c.value);
+            } else if (type === 'text') {
+                const input = card.querySelector('.text-input, input[type="text"]');
+                answers[qName] = input ? input.value.trim() : '';
+            }
+        });
+        return answers;
+    }
+
+    // 下一部分
+    function nextSection() {
+        // 验证当前 section
+        if (currentSection > 0 && !validateSection(currentSection)) {
+            return;
+        }
+
+        // 隐藏当前内容
+        if (currentSection === 0) {
+            headerSection.style.display = 'none';
+        } else {
+            document.getElementById('section' + currentSection).classList.remove('active');
+        }
+
+        currentSection++;
+
+        // 检查是否到达结尾
+        if (currentSection > TOTAL_SECTIONS) {
+            submitSurvey();
+            return;
+        }
+
+        // 显示新 section
+        document.getElementById('section' + currentSection).classList.add('active');
+        updateButtons();
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 上一部分
+    function prevSection() {
+        if (currentSection <= 0) return;
+
+        document.getElementById('section' + currentSection).classList.remove('active');
+        currentSection--;
+
+        if (currentSection === 0) {
+            headerSection.style.display = 'block';
+        } else {
+            document.getElementById('section' + currentSection).classList.add('active');
+        }
+
+        updateButtons();
+        updateProgress();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 更新按钮状态
+    function updateButtons() {
+        btnPrev.style.display = currentSection > 0 ? 'block' : 'none';
+
+        if (currentSection === 0) {
+            btnNext.textContent = '开始填写';
+        } else if (currentSection === TOTAL_SECTIONS) {
+            btnNext.textContent = '提交 ✓';
+        } else {
+            btnNext.textContent = '下一步 →';
+        }
+    }
+
+    // 更新进度条
+    function updateProgress() {
+        const pct = (currentSection / TOTAL_SECTIONS) * 100;
+        progressFill.style.width = pct + '%';
+    }
+
+    // 提交问卷
+    async function submitSurvey() {
+        loading.classList.add('active');
+        btnGroup.style.display = 'none';
+
+        const answers = collectAnswers();
+        const completionTime = Math.round((Date.now() - startTime) / 1000);
+
+        const submission = {
+            answers: answers,
+            metadata: {
+                completed_at: new Date().toISOString(),
+                completion_seconds: completionTime,
+                user_agent: navigator.userAgent,
+            }
+        };
+
+        // 尝试提交到 Supabase
+        if (supabase) {
+            try {
+                const { error } = await supabase
+                    .from('survey_responses')
+                    .insert([{
+                        answers: submission.answers,
+                        metadata: submission.metadata,
+                        created_at: new Date().toISOString()
+                    }]);
+
+                if (error) throw error;
+            } catch (err) {
+                console.error('Supabase error:', err);
+                // 降级：存到 localStorage
+                saveLocally(submission);
+            }
+        } else {
+            // 未配置 Supabase，存到 localStorage
+            saveLocally(submission);
+        }
+
+        loading.classList.remove('active');
+        showThankYou(answers);
+    }
+
+    // 本地存储（降级方案）
+    function saveLocally(submission) {
+        const existing = JSON.parse(localStorage.getItem('survey_data') || '[]');
+        existing.push(submission);
+        localStorage.setItem('survey_data', JSON.stringify(existing));
+    }
+
+    // 显示感谢页面
+    function showThankYou(answers) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        btnGroup.style.display = 'none';
+        progressFill.style.width = '100%';
+
+        const summary = document.getElementById('summaryContent');
+        const items = [
+            { label: '身份', value: answers.q1 },
+            { label: '孩子年龄', value: answers.q2 },
+            { label: '零花钱', value: answers.q3 },
+            { label: 'AI 接受度', value: answers.q7 },
+            { label: '可接受价格', value: answers.q12 },
+            { label: '试用意愿', value: answers.q13 },
+        ];
+
+        summary.innerHTML = items.map(item => `
+            <div class="summary-item">
+                <span class="label">${item.label}</span>
+                <span>${item.value || '未填写'}</span>
+            </div>
+        `).join('');
+
+        document.getElementById('thankYou').classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 导出数据（在浏览器控制台调用）
+    window.exportSurveyData = function() {
+        const data = localStorage.getItem('survey_data');
+        if (!data) {
+            console.log('没有本地数据');
+            return;
+        }
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'survey_data_' + new Date().toISOString().slice(0,10) + '.json';
+        a.click();
+        console.log('数据已导出！');
+    };
+
+    // 初始化
+    init();
+    </script>
+</body>
+</html>
