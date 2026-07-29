@@ -1032,7 +1032,7 @@
             if (type === 'radio') {
                 hasAnswer = card.querySelector('input[type="radio"]:checked') !== null;
             } else if (type === 'checkbox') {
-                hasAnswer = card.querySelector('input[type="checkbox"]:checked') !== null;
+                hasAnswer = card.querySelectorAll('.option-item.selected').length > 0;
             } else if (type === 'text') {
                 hasAnswer = card.querySelector('.text-input').value.trim() !== '';
             }
